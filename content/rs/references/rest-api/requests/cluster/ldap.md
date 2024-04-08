@@ -60,7 +60,7 @@ Returns an [LDAP object]({{<relref "/rs/references/rest-api/objects/ldap">}}).
    "data_plane": false,
    "dn_group_attr": "MemberOf",
    "dn_group_query": {},
-   "starttls": "disabled",
+   "starttls": false,
    "uris": ["ldap://ldap.example.org:636"],
    "user_dn_query": {},
    "user_dn_template": "cn=%u, ou=users,dc=example,dc=org"
@@ -101,7 +101,8 @@ Set or update the cluster LDAP configuration.
     "bind_dn": "rl_admin",
     "bind_pass": "secret",
     "user_dn_template": "cn=%u,dc=example,dc=org",
-    "dn_group_attr": "MemberOf"
+    "dn_group_attr": "MemberOf",
+    "directory_timeout_s": 5
 }
 ```
 

@@ -1,7 +1,7 @@
 ---
-Title: Deploy Redis Enterprise Software on Kubernetes
+Title: Deploy Redis Enterprise Software for Kubernetes
 linkTitle: Kubernetes 
-description: How to install Redis Enterprise Software on Kubernetes.
+description: How to install Redis Enterprise Software for Kubernetes.
 weight: 10
 alwaysopen: false
 categories: ["Platforms"]
@@ -11,72 +11,84 @@ aliases: [
   /platforms/kubernetes/deployment/quick-start/,
   /platforms/kubernetes/deployment/quick-start.md, 
   /kubernetes/deployment/quick-start.md,
-  /kubernetes/deployment/quick-start/
+  /kubernetes/deployment/quick-start/,
+  /rs/getting-started/pcf/,
+  /platforms/pcf/installing-pcf/,
+  /platforms/pcf/,
+  /platforms/pcf/_index.md,
+  /kubernetes/deployment/tanzu/pcf/_index.md,
+  /kubernetes/deployment/tanzu/pcf/,
+  /kubernetes/deployment/tanzu/,
 ]
 ---
 
-To deploy Redis Enterprise Software on Kubernetes, you first need to install the Redis Enterprise operator.
+To deploy Redis Enterprise Software for Kubernetes and start your Redis Enterprise cluster (REC), you need to do the following:
 
-This quick start guide is for generic Kubernetes distributions ([kOps](https://kops.sigs.k8s.io)) as well as:
+- Create a new namespace in your Kubernetes cluster.
+- Download the operator bundle.
+- Apply the operator bundle and verify it's running.
+- Create a Redis Enterprise cluster (REC).
 
- * [Azure Kubernetes Service](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS)
- * [Rancher](https://rancher.com/products/rancher/) / [Rancher Kubernetes Engine](https://rancher.com/products/rke/) (RKE)
- * [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine) (GKE)
- * [Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS)
+This guide works with most supported Kubernetes distributions. If you're using OpenShift, see [Redis Enterprise on OpenShift]({{< relref "/kubernetes/deployment/openshift" >}}). For details on what is currently supported, see [supported distributions]({{<relref "/kubernetes/reference/supported_k8s_distributions.md">}}).
 
-If you're running either OpenShift or VMWare Tanzu, we provide specific getting started guides for installing the Redis Enterprise Operator on these platforms:
 
-* [Redis Enterprise on OpenShift]({{< relref "/kubernetes/deployment/openshift/_index.md" >}})
-* [Redis Enterprise on VMWare Tanzu]({{< relref "/kubernetes/deployment/tanzu/_index.md" >}})
+## Prerequisites
 
-## Prerequistes
+To deploy Redis Enterprise for Kubernetes, you'll need:
 
-To deploy the Redis Enterprise operator, you'll need:
+* a Kubernetes cluster in a [supported distribution]({{<relref "/kubernetes/reference/supported_k8s_distributions.md">}})
+* a minimum of three worker nodes
+* a Kubernetes client (kubectl)
+* access to DockerHub, RedHat Container Catalog, or a private repository that can hold the required images.
 
-- a Kubernetes cluster in a [supported distribution]({{<relref "content/kubernetes/reference/supported_k8s_distributions.md">}})
-- a minimum of three worker nodes
-- a Kubernetes client (kubectl)
-- access to DockerHub, RedHat Container Catalog, or a private repository that can hold the required images.
+### Create a new namespace
 
-See your version's [release notes]({{<relref "/kubernetes/release-notes/_index.md">}}) for a list of required images.
+**Important:** Each namespace can only contain one Redis Enterprise cluster. Multiple RECs with different operator versions can coexist on the same Kubernetes cluster, as long as they are in separate namespaces.
 
-### Namespaces
+Throughout this guide, each command is applied to the namespace in which the Redis Enterprise cluster operates.
 
-The Redis Enterprise operator manages a single Redis Enterprise cluster in a single namespace.
+1. Create a new namespace
 
-Throughout this guide, you should assume that each command is applied to the namespace in
-which the Redis Enterprise cluster operates.
+  ```sh
+  kubectl create namespace <rec-namespace>
+  ```
 
-You can set the default namespace for these operations by running:
+2. Change the namespace context to make the newly created namespace default for future commands.
 
-```
-kubectl config set-context --current --namespace=my-namespace
-```
+  ```sh
+  kubectl config set-context --current --namespace=<rec-namespace>
+  ```
+
+You can use an existing namespace as long as it does not contain any existing Redis Enterprise cluster resources. It's best practice to create a new namespace to make sure there are no Redis Enterprise resources that could interfere with the deployment.
 
 ## Install the operator
 
-The Redis Enterprise operator [definition and reference materials](https://github.com/RedisLabs/redis-enterprise-k8s-docs) are available on GitHub, while the
-operator implementation is published as a Docker container. The operator
-definitions are [packaged as a single generic YAML file](https://github.com/RedisLabs/redis-enterprise-k8s-docs/blob/master/bundle.yaml).
+Redis Enterprise for Kubernetes bundle is published as a container image. A list of required images is available in the [release notes]({{<relref "/kubernetes/release-notes/_index.md">}}) for each version.
 
-### Download the bundle
+The operator [definition and reference materials](https://github.com/RedisLabs/redis-enterprise-k8s-docs) are available on GitHub. The operator definitions are [packaged as a single generic YAML file](https://github.com/RedisLabs/redis-enterprise-k8s-docs/blob/master/bundle.yaml).
 
-To ensure that you pull the correct version of the bundle, check versions tags listed with the [operator releases on GitHub](https://github.com/RedisLabs/redis-enterprise-k8s-docs/releases)
-or by [using the GitHub API](https://docs.github.com/en/rest/reference/repos#releases).
+{{<note>}}
+If you do not pull images from DockerHub or another public registry, you need to use a [private container registry]({{<relref "/kubernetes/deployment/container-images#manage-image-sources">}}).
+{{</note>}}
 
-1. Download the bundle for the latest release:
+### Download the operator bundle
 
-    ```
-    VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
-    curl --silent -O https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
-    ```
+Pull the latest version of the operator bundle:
 
-If you need a different release, replace `VERSION` in the above with a specific release tag.
-
-### Apply the bundle
-
+```sh
+VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
 ```
-kubectl apply -f bundle.yaml
+
+  If you need a different release, replace `VERSION` with a specific release tag.
+
+  Check version tags listed with the [operator releases on GitHub](https://github.com/RedisLabs/redis-enterprise-k8s-docs/releases) or by [using the GitHub API](https://docs.github.com/en/rest/reference/repos#releases) to ensure the version of the bundle is correct.
+
+### Deploy the operator bundle
+
+Apply the operator bundle in your REC namespace:
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
 ```
 
   You should see a result similar to this:
@@ -90,12 +102,14 @@ kubectl apply -f bundle.yaml
   deployment.apps/redis-enterprise-operator created
   ```
 
-#### Verify that the operator is running
+{{<warning>}}DO NOT modify or delete the StatefulSet created during the deployment process. Doing so could destroy your Redis Enterprise cluster (REC).{{</warning>}}
 
-Check the operator deployment to verify it's running in your namespace: 
+#### Verify the operator is running
+
+Check the operator deployment to verify it's running in your namespace:
 
 ```sh
-kubectl get deployment -l name=redis-enterprise-operator
+kubectl get deployment redis-enterprise-operator
 ```
 
 You should see a result similar to this:
@@ -105,23 +119,21 @@ NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
 redis-enterprise-operator   1/1     1            1           0m36s
 ```
 
-### Test the operator
+## Create a Redis Enterprise cluster (REC)
 
-A cluster is created by creating a custom resource with the kind "RedisEnterpriseCluster"
-that contains the specification of the cluster option. See the
-[Redis Enterprise Cluster API reference](https://github.com/RedisLabs/redis-enterprise-k8s-docs/blob/master/redis_enterprise_cluster_api.md)
-for more information on the various options available.
+A Redis Enterprise cluster (REC) is created from a `RedisEnterpriseCluster` custom resource
+that contains cluster specifications.
 
-You can test the operator by creating a minimal cluster by following this procedure:
+The following example creates a minimal Redis Enterprise cluster. See the [RedisEnterpriseCluster API reference](https://github.com/RedisLabs/redis-enterprise-k8s-docs/blob/master/redis_enterprise_cluster_api.md) for more information on the various options available.
 
-1. Create a file called `simple-cluster.yaml` that defines a Redis Enterprise cluster with three nodes:
+1. Create a file (`my-rec.yaml`) that defines a Redis Enterprise cluster with three nodes:
 
-    ```
-    cat <<EOF > simple-cluster.yaml
+    ```sh
+    cat <<EOF > my-rec.yaml
     apiVersion: "app.redislabs.com/v1"
     kind: "RedisEnterpriseCluster"
     metadata:
-      name: "test-cluster"
+      name: my-rec
     spec:
       nodes: 3
     EOF
@@ -129,113 +141,132 @@ You can test the operator by creating a minimal cluster by following this proced
 
     This will request a cluster with three Redis Enterprise nodes using the
     default requests (i.e., 2 CPUs and 4GB of memory per node).
-    If you want to test with a larger configuration, you can
-    specify the node resources. For example, this configuration increases the memory:
 
-    ```
-    cat <<EOF > simple-cluster.yaml
-    apiVersion: "app.redislabs.com/v1"
-    kind: "RedisEnterpriseCluster"
-    metadata:
-      name: "test-cluster"
-    spec:
-      nodes: 3
-      redisEnterpriseNodeResources:
-        limits:
-          cpu: 2000m
-          memory: 16Gi
-        requests:
-          cpu: 2000m
-          memory: 16Gi
-    EOF
-    ```
+    To test with a larger configuration, use the example below to add node resources to the `spec` section of your test cluster (`my-rec.yaml`).
 
-    See the [Redis Enterprise hardware requirements]({{< relref "/rs/administering/designing-production/hardware-requirements.md">}}) for more
+    ```yaml
+    redisEnterpriseNodeResources:
+      limits:
+        cpu: 2000m
+        memory: 16Gi
+      requests:
+        cpu: 2000m
+        memory: 16Gi
+    ```
+    {{<note>}}
+Each cluster must have at least 3 nodes. Single-node RECs are not supported.
+    {{</note>}}
+
+    See the [Redis Enterprise hardware requirements]({{< relref "/rs/installing-upgrading/install/plan-deployment/hardware-requirements.md">}}) for more
     information on sizing Redis Enterprise node resource requests.
+  
+1. Apply your custom resource file in the same namespace as `my-rec.yaml`.
 
-2. Create the CRD in the namespace with the file `simple-cluster.yaml`:
+  ```sh
+  kubectl apply -f my-rec.yaml
+  ```
 
-    ```
-    kubectl apply -f simple-cluster.yaml
-    ```
+  You should see a result similar to this:
 
-    You should see a result similar to this:
+  ```sh
+  redisenterprisecluster.app.redislabs.com/my-rec created
+  ```
 
-    ```
-    redisenterprisecluster.app.redislabs.com/test-cluster created
-    ```
+1. You can verify the creation of the cluster with:
 
-3. You can verify the creation of the with:
+  ```sh
+  kubectl get rec
+  ```
 
-    ```
-    kubectl get rec
-    ```
+  You should see a result similar to this:
 
-    You should see a result similar to this:
-
-    ```
-    NAME           AGE
-    test-cluster   1m
-    ```
-
+  ```sh
+  NAME           AGE
+  my-rec   1m
+  ```
 
    At this point, the operator will go through the process of creating various
-   services and pod deployments. You can track the progress by examining the
+   services and pod deployments.
+
+   You can track the progress by examining the
    StatefulSet associated with the cluster:
 
-   ```
-   kubectl rollout status sts/test-cluster
+   ```sh
+   kubectl rollout status sts/my-rec
    ```
 
-   or by simply looking at the status of all of the resources in your namespace:
+   or by looking at the status of all of the resources in your namespace:
 
-   ```
+   ```sh
    kubectl get all
    ```
 
-4. Once the cluster is running, you can create a test database. First, define the database with the following YAML file:
+## Enable the admission controller
 
-   ```
-   cat <<EOF > smalldb.yaml
-   apiVersion: app.redislabs.com/v1alpha1
-   kind: RedisEnterpriseDatabase
-   metadata:
-     name: smalldb
-   spec:
-     memory: 100MB
-   EOF
-   ```
+The admission controller dynamically validates REDB resources configured by the operator. It is strongly recommended that you use the admission controller on your Redis Enterprise Cluster (REC). The admission controller only needs to be configured once per operator deployment.
 
-   Next, apply the database:
+As part of the REC creation process, the operator stores the admission controller certificate in a Kubernetes secret called `admission-tls`. You may have to wait a few minutes after creating your REC to see the secret has been created.
 
-   ```
-   kubectl apply -f smalldb.yaml
-   ```
+{{< embed-md "k8s-admission-webhook-cert.md"  >}}
 
-5. The connectivity information for the database is now stored in a Kubernetes
-   secret using the same name but prefixed with `redb-`:
+### Limit the webhook to the relevant namespaces {#webhook}
 
-   ```
-   kubectl get secret/redb-smalldb -o yaml
-   ```
+The operator bundle includes a webhook file. The webhook will intercept requests from all namespaces unless you edit it to target a specific namespace. You can do this by adding the `namespaceSelector` section to the webhook spec to target a label on the namespace.
 
-   From this secret you can get the service name, port, and password for the
-   default user.
+1. Make sure the namespace has a unique `namespace-name` label.
 
+    ```sh
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+       labels:
+        namespace-name: example-ns
+    name: example-ns
+    ```
 
-## Operator overview {#overview}
+1. Patch the webhook to add the `namespaceSelector` section.
 
-The Redis Enterprise operator uses [custom resource definitions](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#customresourcedefinitions) (CRDs) to create and manage Redis Enterprise clusters (REC) and Redis Enterprise databases (REDB).
+    ```sh
+    cat > modified-webhook.yaml <<EOF
+    webhooks:
+    - name: redisenterprise.admission.redislabs
+      namespaceSelector:
+        matchLabels:
+          namespace-name: staging
+    EOF
+    ```
 
-The operator is a deployment that runs within a given namespace. These operator pods must run with sufficient privileges to create the Redis Enterprise cluster resources within that namespace.
+1. Apply the patch.
 
-When the operator is installed, the following resources are created:
+    ```sh
+    kubectl patch ValidatingWebhookConfiguration \
+      redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
+    ```
 
- * a service account under which the operator will run
- * a set of roles to define the privileges necessary for the operator to perform its tasks
- * a set of role bindings to authorize the service account for the correct roles (see above)
- * the CRD for a Redis Enterprise cluster (REC) 
- * the CRD for a Redis Enterprise database (REDB)
- * the operator itself (a deployment)
+## Verify the admission controller is working
 
-The operator currently runs within a single namespace and is scoped to operate only on the Redis Enterprise cluster in that namespace.
+1. Verify the admission controller is installed correctly by applying an invalid resource. This should force the admission controller to correct it.
+
+    ```sh
+    kubectl apply -f - << EOF
+    apiVersion: app.redislabs.com/v1alpha1
+    kind: RedisEnterpriseDatabase
+    metadata:
+      name: redis-enterprise-database
+    spec:
+      evictionPolicy: illegal
+    EOF
+    ```
+
+You should see your request was denied by the `admission webhook "redisenterprise.admission.redislabs"`.
+
+```sh
+Error from server: error when creating "STDIN": admission webhook "redisenterprise.admission.redislabs" denied the request: eviction_policy: u'illegal' is not one of [u'volatile-lru', u'volatile-ttl', u'volatile-random', u'allkeys-lru', u'allkeys-random', u'noeviction', u'volatile-lfu', u'allkeys-lfu']
+```
+
+## Create a Redis Enterprise Database (REDB)
+
+You can create multiple databases within the same namespace as your REC or in other namespaces.
+
+See [manage Redis Enterprise databases for Kubernetes]({{<relref "/kubernetes/re-databases/db-controller.md">}}) to create a new REDB.
+

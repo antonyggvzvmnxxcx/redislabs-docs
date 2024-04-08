@@ -41,14 +41,21 @@ highlightClientSide = false # set true to use highlight.pack.js instead of the d
 menushortcutsnewtab = false # set true to open shortcuts links to a new tab/window
 googleAnalytics = "UA-92003007-1"
 googleTagManager = "GTM-KNWQXKB"
-bannerText = "Sign up for Redis Enterprise Cloud and use MATRIX200 to get $200 in credits."
-bannerLink = "https://redis.com/try-free?utm_source=docs&utm_medium=referral&utm_campaign=2021-11-reinvent+try_free"
+
+bannerText = "This site is archived and no longer updated. For the latest Redis documentation, see [https://redis.io/docs/]"
+bannerLink = "https://redis.io/docs/"
 
 mac_dl_link = "https://downloads.redisinsight.redislabs.com/latest/redisinsight-mac.dmg"
 linux_dl_link = "https://downloads.redisinsight.redislabs.com/latest/redisinsight-linux64"
 windows_dl_link = "https://downloads.redisinsight.redislabs.com/latest/redisinsight-win.msi"
 docker_command = "docker run -v redisinsight:/db -p 8001:8001 redislabs/redisinsight:latest"
 docker_db_volume_permission = "chown -R 1001 redisinsight"
+
+rdi_rlec_min_version = "6.2.18"
+rdi_redis_gears_version = "1.2.6"
+rdi_debezium_server_version = "2.3.0.Final"
+rdi_db_types = "cassandra|mysql|oracle|postgresql|sqlserver"
+rdi_cli_latest = "latest"
 
 siteURL = "http://127.0.0.1:8001"
 

@@ -2,11 +2,11 @@
 Title: Redis Enterprise databases (REDB)
 linkTitle: Redis Enterprise databases (REDB)
 description: Articles to help you manage your Redis Enterprise databases (REDBs).
-weight: 30
+weight: 31
 alwaysopen: false
 categories: ["Platforms"]
 aliases: [
-    content/platforms/kubernetes/redb/_index.md,
+    platforms/kubernetes/redb/_index.md,
     /platforms/kubernetes/redb/,
     /kubernetes/re-databases/,
     /kubernetes/re-databases/_index.md,

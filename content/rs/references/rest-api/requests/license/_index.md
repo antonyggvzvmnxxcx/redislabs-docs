@@ -48,18 +48,41 @@ and supported features.
 
 ### Response {#get-response} 
 
-Returns a JSON object that contains the license details.
+Returns a JSON object that contains the license details:
+
+| Name | Type/Value | Description |
+|------|------------|-------------|
+| license | string | License data |
+| cluster_name | string | The cluster name (FQDN) |
+| expired | boolean | If the cluster key is expired (`true` or `false`) |
+| activation_date | string | The date of the cluster key activation |
+| expiration_date | string | The date of the cluster key expiration |
+| key | string | License key |
+| features | array of strings | Features supported by the cluster |
+| owner | string | License owner |
+| shards_limit | integer | The total number of shards allowed by the cluster key |
+| ram_shards_limit | integer | The number of RAM shards allowed by the cluster key (as of v7.2) |
+| ram_shards_in_use | integer | The number of RAM shards in use |
+| flash_shards_limit | integer | The number of flash shards (Auto Tiering) allowed by the cluster key (as of v7.2) |
+| flash_shards_in_use | integer | The number of flash shards in use |
 
 #### Example JSON body
 
 ```json
 {
-    "license": "----- LICENSE START -----\ndi+iK...KniI9\n----- LICENSE END -----\n",
+    "license": "----- LICENSE START -----\\ndi+iK...KniI9\\n----- LICENSE END -----\\n",
     "expired": true,
     "activation_date":"2018-12-31T00:00:00Z",
     "expiration_date":"2019-12-31T00:00:00Z",
-    "shards_limit": 300,
-    "features": ["bigstore"]
+    "ram_shards_in_use": 0,
+    "ram_shards_limit": 300,
+    "flash_shards_in_use": 0,
+    "flash_shards_limit": 100,
+    "shards_limit": 400,
+    "features": ["bigstore"],
+    "owner": "Redis",
+    "cluster_name": "mycluster.local",
+    "key": "----- LICENSE START -----\\ndi+iK...KniI9\\n----- LICENSE END -----\\n"
 }
 ```
 
@@ -75,6 +98,8 @@ Returns a JSON object that contains the license details.
 	PUT /v1/license
 
 Validate and install a new license string.
+
+If you do not provide a valid license, the cluster behaves as if the license was deleted. See [Expired cluster license]({{<relref "/rs/clusters/configure/license-keys#expired-cluster-license">}}) for a list of available actions and restrictions.
 
 #### Required permissions
 

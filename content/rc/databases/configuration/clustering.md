@@ -1,7 +1,7 @@
 ---
 Title: Clustering Redis Databases
 linkTitle: Clustering 
-description: Redis Enterprise Cloud uses clustering to manage very large databases (25 GB and larger).  Here, you'll learn how to manage clustering and how to use hashing policies to control how data is managed.
+description: Redis Cloud uses clustering to manage very large databases (25 GB and larger).  Here, you'll learn how to manage clustering and how to use hashing policies to control how data is managed.
 weight: $weight
 alwaysopen: false
 categories: ["RC"]
@@ -12,11 +12,11 @@ aliases: /rc/concepts/clustering-redis-cloud/
          /rc/databases/configuration/clustering/
          /rc/databases/configuration/clustering.md
 ---
-For very large databases, Redis Enterprise Cloud distributes database data to different cloud instances.  For example:
+For very large databases, Redis Cloud distributes database data to different cloud instances.  For example:
 
 - When data grows beyond the the RAM resources of a single server.
 
-    Multiple shards should be used when data grows to 25 GB (50 GB for Redis on Flash) to create multiple shards.
+    Multiple shards should be used when data grows to 25 GB (50 GB for Auto Tiering) to create multiple shards.
 
 - The operations performed against the database are CPU intensive enough to degrade performance.
 
@@ -31,13 +31,13 @@ with each process managing a subset of the database keyspace.
 Clustering uses multiple cores and resources of multiple instances to overcome scaling challenges.
 
 In a Redis Cloud cluster, the keyspace is partitioned into hash
-slots. At any given time a slot resides on and is managed by a single
+slots. At any given time a hash slot resides on and is managed by a single
 Redis server. 
 
-An instance that belongs to a cluster can manage multiple
+An instance that belongs to a cluster can manage multiple hash
 slots. This division of the key space, known as _sharding_, is achieved by
 hashing the key names, or parts of these (key hash tags), in order to
-obtain the slot in which a key should reside.
+obtain the hash slot in which a key should reside.
 
 Even when using multiple Redis processes, the use of a Redis
 Enterprise Cloud cluster is nearly transparent to the application that
@@ -47,7 +47,7 @@ complexity of a cluster-aware Redis client. This allows applications to
 benefit from using the cluster without performing any code changes, even
 if they were not designed to use it beforehand.
 
-When creating or editing a Redis database on Redis Enterprise Cloud, the
+When creating or editing a Redis database on Redis Cloud, the
 system automatically calculates the number of shards needed based on
 the database memory limit and required throughput.
 
@@ -62,14 +62,14 @@ For Redis Cloud Essentials, clustering is only available in the
 ## Multi-key operations {#multikey-operations}
 
 Operations on multiple keys in a sharded Redis Cloud cluster
-are supported with the following limitations:
+are supported, with the following limitations:
 
 1. **Multi-key commands:** Redis offers several commands that accept
-    multiple keys as arguments. In a sharded setup, multi-key commands
-    can only be used when all affected keys reside in the same slot.
-    These commands are: BITOP, BLPOP, BRPOP, BRPOPLPUSH, MSETNX,
+    multiple keys as arguments. In a sharded setup, you can run multi-key commands
+    only if all the affected keys reside in the same slot (thus on the same shard).
+    This restriction applies to all mulit-key commands, including BITOP, BLPOP, BRPOP, BRPOPLPUSH, MSETNX,
     RPOPLPUSH, SDIFF, SDIFFSTORE, SINTER, SINTERSTORE, SMOVE, SORT,
-    SUNION, ZINTER, ZINTERSTORE, ZUNION, ZUNIONSTORE, ZDIFF, ZDIFFSTORE
+    SUNION, XREAD, XREADGROUP, ZINTER, ZINTERSTORE, ZUNION, ZUNIONSTORE, ZDIFF, ZDIFFSTORE
 1. **Geo commands:** In GEORADIUS/GEORADIUSBYMEMBER/GEOSEARCHSTORE commands, the
     STORE and STOREDIST options can only be used when all affected keys
     reside in the same slot.
@@ -85,11 +85,14 @@ are supported with the following limitations:
     and pipelining are supported with Redis Cloud cluster
     like if it were a non-cluster DB.
 
-## Changing the hashing policy
+## Manage the hashing policy
 
-The clustering configuration of a Redis Cloud instance can be
-changed. However, hashing policy changes delete existing data 
-(FLUSHDB) before they're applied. These changes include:
+Redis defaults to the [standard hashing policy]({{< relref "/rs/databases/durability-ha/clustering#standard-hashing-policy" >}}). 
+The clustering configuration of a Redis Cloud instance can be changed. 
+However, hashing policy changes delete existing data 
+(FLUSHDB) before they're applied. 
+
+These changes include:
 
 1. Changing the hashing policy, either from standard to custom or vice versa.
 1. Changing the order of custom hashing policy rules.
@@ -115,7 +118,8 @@ performed as follows:
 You can use the '{...}' pattern to direct related keys to the same hash
 slot, so that multi-key operations are supported on them. On the other
 hand, not using a hashtag in the key's name results in a
-(statistically) even distribution of keys across the keyspace's shards.
+(statistically) even distribution of keys across the keyspace's shards, 
+which improves resource utilization. 
 If your application does not perform multi-key operations, you don't
 need to construct key names with hashtags.
 
@@ -159,3 +163,40 @@ their order to suit your application's requirements.
 1. The following flag is enabled in our regular expression parser:
    - **PCRE_ANCHORED:** the pattern is constrained to match only at
         the start of the string which is being searched.
+
+## Dataset size
+
+The dataset size represents the maximum amount of memory for the database, which includes data values, keys, module data, and overhead for specific features.  High availability features, such as replication and Active-Active,  increase memory consumption.  
+
+Here are some general guidelines:
+
+- Memory limit represents an upper limit.  You cannot store more data than the memory limit.  Depending on your other selections, available memory for data may be less than expected.
+
+- [Replication](HA LINK) doubles memory consumption; that is, 512MB of data requires at least 1GB of memory limit when replication is enabled. This affects both Redis Cloud Pro and Redis Cloud Essentials. For example, if you subscribe to a 1 GB Essentials plan, Redis will allocate 512 MB for your dataset and the other 512 MB for replication.
+
+- Active-Active also doubles memory consumption and the effect is cumulative with replication's impact. Since Active-Active requires replication to be turned on, the memory limit impact can be as large as four times (4x) the original data size.
+
+- Advanced capabilities also consume memory.
+
+Memory limits in Redis Cloud are subject to the same considerations as Redis Enterprise Software; to learn more, see [Database memory limits]({{< relref "/rs/databases/memory-performance/memory-limit.md" >}}).
+
+## Throughput
+
+Throughput is the amount of operations a database can handle over a certain period of time. For most Redis Cloud databases, throughput is defined in operations per second (ops/sec).
+
+For a Redis Cloud Pro subscription, you define throughput for a database when you create it. For a Redis Cloud Essentials subscription, your maximum throughput depends on your plan.
+
+We assume a typical workload that includes a different mix of commands and an average key and value size of 1KB. Therefore, your actual throughput may be higher or lower than the throughput you set when you create your database. The following properties can affect your database's throughput:
+- **Command complexity**: O(N) and O(log(N)) commands will take more time than O(1) commands, and will affect throughput accordingly.
+- **Key and value sizing**: If your database's keys and values are very large, your actual throughput may be lower than expected. If the keys and values are smaller than the typical workload, the actual throughput might be higher than expected.
+- **Replication**: Using [multi-zone replication]({{<relref "rc/databases/configuration/high-availability">}}) affects throughput as each write operation is executed asynchronously in each zone.
+- **Security**: Some security options, such as [transport layer security]({{< relref "/rc/security/database-security/tls-ssl" >}}), may affect throughput.
+- **Number of client connections**: The number of client connections affects throughput. Increasing or decreasing the number of client connections can result in higher or lower throughput.
+
+## OSS Cluster API
+
+{{< embed-md "oss-cluster-api-intro.md"  >}}
+
+The OSS Cluster API is only supported on Redis Cloud Pro databases. You can enable it in the Scalability section of the configuration screen.
+
+Review [Redis OSS Cluster API architecture]({{< relref "/rs/clusters/optimize/oss-cluster-api" >}}) to determine if you should enable this feature for your database.

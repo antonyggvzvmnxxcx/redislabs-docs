@@ -1,7 +1,7 @@
 ---
 Title: High availability and replication
 linkTitle: High availability
-description: Describes database replication and high availability as it affects Redis Enterprise Cloud.   
+description: Describes database replication and high availability as it affects Redis Cloud.   
 weight: $weight
 alwaysopen: false
 categories: ["RC"]
@@ -19,7 +19,7 @@ Replication allows for automatic failover and greater fault tolerance.  It can p
 
 ## Options and plan support
 
-Redis Enterprise Cloud supports three levels of replication:
+Redis Cloud supports three levels of replication:
 
 - _No replication_ means that you will have a single copy of your database.
 
@@ -29,19 +29,22 @@ Redis Enterprise Cloud supports three levels of replication:
 
 Your replication options depend on your [subscription plan]({{<relref "/rc/subscriptions/_index.md">}}):
 
-- _Free_ plans do not support replication.
-- _Fixed_ plans let you choose between no replication, single-zone replication, or multi-zone replication when creating a subscription.  
-- _Flexible_ and _Annual_ plans allow multi-zone or single-zone subscriptions by default.  You can also disable replication.
+- Free Redis Cloud Essentials plans do not support replication.
+- Paid Redis Cloud Essentials plans and Redis Cloud Pro plans let you choose between multi-zone or single-zone replication when creating a subscription. You can also turn off replication.
+
+After database creation, you can still enable or turn off replication.  However, [zone settings]({{<relref "/rc/databases/configuration/high-availability#zone-setting-maintenance">}}) are only configurable during database creation.  
 
 ## Performance impact 
 
 Replication can affect performance as traffic increases to synchronize all copies. 
 
-Database storage costs also increase:
+## Dataset size
 
-- For Fixed plans, single-zone and multi-zone replication effectively doubles storage costs
+For both Redis Cloud Essentials and Redis Cloud Pro, replication doubles the dataset size you need for your database. 
 
-- For Flexible and Annual plans, replication requires additional shards and can affect subscription costs
+For Redis Cloud Essentials, the size of the plan you choose includes replication. Therefore, if you choose replication, the dataset size you can use is half of the stated plan size. For example, if you choose a 1GB plan, Redis allocates 512 GB for the memory limit, and the other 512 MB for Replication.
+
+For Redis Cloud Pro, you also need to double the amount of memory needed if you choose replication.
 
 ## Zone setting maintenance
 
@@ -49,10 +52,30 @@ Zone settings can only be defined when a subscription is created.  You cannot ch
 
 This means you can't convert a multi-zone subscription to a single zone (or vice-versa).  
 
-To use different zone settings, create a new subscription with the preferred settings and then migrate data from the original subscription.
+To use different zone settings, create a new subscription with the preferred settings and then [migrate data]({{<relref "/rc/databases/migrate-databases.md">}}) from the original subscription.
+
+## Availability zones
+
+You can reduce network transfer costs and network latency by ensuring your Redis Cloud cluster and your application are located in the same availability zone. 
+
+To specify the availability zone for your cluster, select *Manual Selection* under **Allowed Availability Zones**. 
+
+For Google Cloud clusters and [self-managed AWS cloud accounts]({{< relref "/rc/cloud-integrations/aws-cloud-accounts/" >}}), select an availability zone from the **Zone name** list.
+
+{{<image filename="images/rc/availability-zones-no-multi-az.png" width="95%" alt="Select one availability zone when Multi-AZ is turned off." >}}{{< /image >}}
+
+For all other AWS clusters, select an availability zone ID from the **Zone IDs** list. For more information on how to find an availability zone ID, see the [AWS docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-availability-zones).
+
+{{<image filename="images/rc/availability-zones-aws-hosted-no-multi-az.png" width="80%" alt="For hosted AWS clusters, select availability zone IDs from the Zone IDs list." >}}{{< /image >}}
+
+If **Multi-AZ** is enabled, you must select three availability zones from the list.
+
+{{<image filename="images/rc/availability-zones-multi-az.png" width="80%" alt="Select Manual selection to select three availability zones when Multi-AZ is enabled." >}}{{< /image >}}
+
+For more information on availability zones, see the [Google Cloud docs](https://cloud.google.com/compute/docs/regions-zones/#available) or the [AWS docs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-availability-zones).
 
 ## More info
 
 To learn more about high availability and replication, see:
 - [Highly Available Redis](https://redislabs.com/redis-enterprise/technology/highly-available-redis/)
-- [Database replication]({{<relref "/rs/concepts/high-availability/replication.md">}})
+- [Database replication]({{<relref "/rs/databases/durability-ha/replication.md">}})

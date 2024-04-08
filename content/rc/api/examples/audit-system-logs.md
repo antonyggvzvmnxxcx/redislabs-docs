@@ -10,23 +10,23 @@ aliases: /rv/api/how-to/view-auditing-using-system-log/
          /rc/examples/audit-system-logs/
          /rc/api/examples/audit-system-logs.md
 ---
-Service logs collect and report actions performed on various entities in your Redis Enterprise Cloud subscription.  These entities include the account itself, users, API Keys, subscriptions, databases, accounts, payment methods, and more. For each entity, various lifecycle events are logged in the system log.
+Service logs collect and report actions performed on various entities in your Redis Cloud subscription.  These entities include the account itself, users, API Keys, subscriptions, databases, accounts, payment methods, and more. For each entity, various lifecycle events are logged in the system log.
 
-You can view the system service log in the Redis Enterprise Cloud admin console by selecting **Service log** from the console menu. This displays recent service log entries for the current account.
+To view the log, sign in to the Redis Cloud [admin console](https://app.redislabs.com/) and then select **Logs** from the main menu.
 
-![Service service logs in the admin console](/images/rc/system_log.png)
+{{<image filename="images/rc/system-logs.png" alt="Choose the Logs command from the Redis Cloud admin console menu to view your subscription system log." width="75%">}}{{< /image >}} 
 
-### System service log API
+To learn more, see [System logs]({{<relref "/rc/logs-reports/system-logs">}}).
 
-The API operation for querying the system service log is `GET /logs`.
+
+### System log REST API
+
+The REST API operation for querying the system service log is `GET /logs`.
 
 For example, the following request returns the latest 100 system log entries, in descending order:
 
 ```shell
-curl -X GET "https://$HOST/logs?limit=100&offset=0" \
-    -H "accept: application/json" \
-    -H "x-api-key: $ACCOUNT_KEY" \
-    -H "x-api-secret-key: $SECRET_KEY"
+GET "https://[host]/v1/logs?limit=100&offset=0"
 ```
 
 The `/logs` API operation accepts the following parameters:
@@ -48,7 +48,7 @@ An API system log request results in data that includes an `entries` array. The 
 
 - `apiKeyName` - The name of the API key used to perform the action described by the system log entry.
     This field only appears if the action was performed through the API.
-    If the operation was performed through the Redis Enterprise Cloud admin console, this property is omitted.
+    If the operation was performed through the Redis Cloud admin console, this property is omitted.
 
 - `resource` - The name of the entity associated with the logged action (for example, database name).
     This property is omitted if it is not applicable to the specific log entry.

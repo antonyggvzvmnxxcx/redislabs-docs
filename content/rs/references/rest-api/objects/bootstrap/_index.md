@@ -14,6 +14,7 @@ A bootstrap configuration object.
 | action | 'create_cluster'<br />'join_cluster'<br />'recover_cluster' | Action to perform |
 | cluster | [cluster_identity]({{<relref "/rs/references/rest-api/objects/bootstrap/cluster_identity">}}) object | Cluster to join or create |
 | cnm_https_port | integer | Port to join a cluster with non-default cnm_https port |
+| crdb_coordinator_port | integer, (range:&nbsp;1024-65535) (default:&nbsp;9081) | CRDB coordinator port |
 | credentials | [credentials]({{<relref "/rs/references/rest-api/objects/bootstrap/credentials">}}) object | Cluster admin credentials |
 | dns_suffixes | {{<code>}}
 [{
@@ -24,7 +25,10 @@ A bootstrap configuration object.
   "slaves": array
 }, ...]
 {{</code>}} | Explicit configuration of DNS suffixes<br />**name**: DNS suffix name<br />**cluster_default**: Should this suffix be the default cluster suffix<br />**use_aaaa_ns**: Should AAAA records be published for NS records<br />**use_internal_addr**: Should internal cluster IPs be published for databases<br />**slaves**: List of replica servers that should be published as NS and notified |
-| license | string | License string |
+| envoy_admin_port | integer, (range:&nbsp;1024-65535) | Envoy admin port. Changing this port during runtime might result in an empty response because envoy serves as the cluster gateway.|
+| envoy_mgmt_server_port | integer, (range:&nbsp;1024-65535) | Envoy management server port|
+| gossip_envoy_admin_port | integer, (range:&nbsp;1024-65535) | Gossip envoy admin port|
+| license | string | License string. If not provided, a trial license is set by default. |
 | max_retries | integer | Max number of retries in case of recoverable errors |
 | node | [node_identity]({{<relref "/rs/references/rest-api/objects/bootstrap/node_identity">}}) object | Node description |
 | policy | [policy]({{<relref "/rs/references/rest-api/objects/bootstrap/policy">}}) object | Policy object |

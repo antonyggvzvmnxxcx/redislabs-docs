@@ -1,29 +1,39 @@
-1. In the web browser on the host machine, go to https://localhost:8443 to see
-the Redis Enterprise Software web console.
+1. In the web browser on the host machine, go to [https://localhost:8443/new](https://localhost:8443/new) to see
+the new Redis Enterprise Software Cluster Manager UI. The cluster generates self-signed TLS certificates to secure the connection.  These self-signed certificates are unknown to the browser and must be accepted before you proceed.
+
+    To use the legacy UI for this quickstart instead, see the [6.4 version of the quickstarts](https://docs.redis.com/6.4/rs/installing-upgrading/quickstarts/).
 
     {{< note >}}
-- Depending on your browser, you may see a certificate error. You can safely
-continue to the web console.
 - If the server does not show the login screen, try again after a few minutes.
 
     {{< /note >}}
 
-1. Click **Setup** to start the node configuration steps.
+1. Select **Create new cluster**.
 
-    ![Redis Enterprise Software Setup](/images/rs/getstarted-setup.png)
+    {{<image filename="images/rs/screenshots/cluster/setup/create-cluster.png" alt="When you first install Redis Enterprise Software, you need to set up a cluster." >}}{{</image>}}
 
-1. In the **Node Configuration** settings, enter a cluster FQDN such as `cluster.local`.
-Then click **Next** button.
+2. Enter an email and password for the administrator account, then select **Next** to proceed to cluster setup.
 
-    ![Redis Enterprise Software node configuration](/images/rs/getstarted-nodeconfig.png)
+    {{<image filename="images/rs/screenshots/cluster/setup/admin-credentials.png" alt="Set the credentials for your admin user." >}}{{</image>}}
 
-1. Enter your license key, if you have one. If not, click the **Next** button to use the trial version.
+    You can also use these credentials to connect to the [REST API]({{<relref "/rs/references/rest-api">}}).
 
-1. Enter an email and password for the admin account for the web console.
+3. Enter your cluster license key if you have one. Otherwise, a trial version is installed.
 
-    ![Redis Enterprise Software admin credentials](/images/rs/getstarted-admincredentials.png)
+    {{<image filename="images/rs/screenshots/cluster/setup/cluster-license-key.png" alt="Enter your cluster license key if you have one." >}}{{</image>}}
 
-    These credentials are also used for connections to the REST API.
+4. In the **Configuration** section, enter a cluster FQDN such as `cluster.local`, then select **Next**.
 
-1. Click **OK** to confirm that you are aware of the replacement of the HTTPS SSL/TLS
-certificate on the node, and proceed through the browser warning.
+    {{<image filename="images/rs/screenshots/cluster/setup/config-cluster.png" alt="Configure the cluster FQDN." >}}{{</image>}}
+
+    {{< warning >}}
+If the FQDN is `cluster.local`, you cannot configure DNS. You cannot change the FQDN after cluster creation.
+    {{< /warning >}}
+
+1. On the node setup screen, select **Create cluster** to accept the defaults.
+
+    {{<image filename="images/rs/screenshots/cluster/setup/node-settings.png" alt="Configure the node specific settings." >}}{{</image>}}
+
+6. Select **OK** to acknowledge the replacement of the HTTPS TLS certificate on the node.  If you receive a browser warning, you can proceed safely.
+
+    {{<image filename="images/rs/screenshots/cluster/setup/https-page-refresh-modal.png" alt="Modal shown when a page refresh is needed because the certificates have been updated." >}}{{</image>}}

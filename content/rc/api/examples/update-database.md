@@ -13,13 +13,13 @@ aliases: /rv/api/how-to/update-databases/
 
 The API operation that updates an existing database is: `PUT /subscriptions/{subscription-id}/databases/{database-id}`
 
-This API operation uses the same [provisioning lifecycle]({{< relref "/rc/api/get-started/process-lifecycle.md" >}}) as the [create database]({{< relref "/rc/api/examples/create-database.md" >}}) operation.
+This API operation uses the same [provisioning lifecycle]({{< relref "/rc/api/get-started/process-lifecycle.md" >}}) as the [create database]({{< relref "/rc/api/examples/create-database" >}}) operation. The examples in this article refer to Redis Cloud Pro databases. 
 
 ## Database update request JSON body
 
 The primary component of a database update request is the JSON request body that contains the details of the requested database changes.
 
-You can see [the complete set of JSON elements]({{< relref "/rc/api/get-started/use-rest-api.md#inputs-for-operations-in-swagger" >}}) accepted by the database update API operation in the [Swagger UI](https://api.redislabs.com/v1/swagger-ui.html).
+You can see [the complete set of JSON elements]({{< relref "/rc/api/get-started/use-rest-api#inputs-for-operations-in-swagger" >}}) accepted by the database update API operation in the [Swagger UI](https://api.redislabs.com/v1/swagger-ui.html).
 To see the JSON elements, expand the specific API operation and, in the request section, click **Model**.
 
 Here are several examples of JSON requests to update a database:

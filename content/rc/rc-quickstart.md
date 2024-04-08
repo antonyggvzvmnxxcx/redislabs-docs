@@ -1,198 +1,145 @@
 ---
-Title: Redis Cloud Quick Start
+Title: Redis Cloud quick start
 description:
 weight: 10
 alwaysopen: false
 categories: ["RC"]
-linktitle: "Quick Start"
+linktitle: "Quick start"
 aliases: /rv/quick-setup/
          /rc/quick-setup-redis-cloud/
          /rc/quick-setup/
 ---
 
-If you're new to Redis Enterprise Cloud, this quick start helps you get up and running.  
+If you're new to Redis Cloud, this quick start helps you get up and running.  
 
 You'll learn how to:
 
-1.  Create a free subscription
+1.  Create an account and a free database
 
-2.  Create a database
+1.  Connect to your database
 
-3.  Connect to your database
+If you already have an account, see [Create a database]({{<relref "/rc/databases/create-database">}}) to create a Free 30 MB Essentials database. Free plans are a type of Essentials plans; this provides an easy upgrade path when you need it.
 
-If you already have a subscription, see [Manage subscriptions]({{< relref "/rc/subscriptions/" >}}) and [Manage databases]({{< relref "/rc/databases/" >}}).
+If you already have a database, see [Manage databases]({{< relref "/rc/databases/" >}}).
 
-## Create a subscription
+## Create an account
 
-To create a new free subscription:
+To create a new account with a free database:
 
-1. Sign in to the Redis Cloud [admin portal](https://app.redislabs.com/new/).  (Create an account if you don't already have one.)
+1. Go to the [Sign up](https://redis.com/try-free/) page.
 
-2. If this is the first time you've signed in, you have no active subscriptions and can select the **Add subscription** button.
+1. There are two options available to get started with Redis Cloud:
+   * Enter your information in the form and select **Get Started**.
+   * Sign up with **Google** or **Github**.
 
-    {{<image filename="images/rc/button-subscription-add.png" alt="The Add subscriptions button appears when there are no other subscriptions." >}}{{< /image >}}
+1. After you enter your information, you should receive an activation email from Redis. Select **Activate account** to go to the **Get Started** page in the [Redis Cloud console](https://app.redislabs.com).
 
-    If you already have a subscription, select the **New subscription** button in the admin menu.
+    {{<image filename="images/rc/quickstart-get-started.png" width="75%" alt="Dialog to create your free database." >}}{{< /image >}}
 
-    {{<image filename="images/rc/button-subscription-new.png" alt="The New subscriptions button in the admin console menu." >}}{{< /image >}}
+    1. Choose your role from the **Role** drop-down.
+    1. Choose your company size from the **myself/company** drop-down. If you are working on a personal project, select **myself**.
+    1. Select your Redis use case from the **use case** drop-down.
+     1. Choose your client language from the **client** drop-down.
 
-    (You can only have one free subscription.)
+    Click **Create Free Database** to move on.
 
-3. When the **New subscription** page appears, select **Fixed plans** and then scroll to the cloud vendor options.
+1. Select your preferred cloud vendor and region.
 
-    {{<image filename="images/rc/subscription-new-plan-options.png" alt="Available subscription plan options." >}}{{< /image >}}
+   {{<image filename="images/rc/quickstart-create-free-database.png" width="75%" alt="Dialog to create your free database." >}}{{< /image >}}
 
-4.  Choose a **Cloud Provider** and a **Region**.
+1. Select **Let's start free** to create your database.
 
-    (You can ignore the **High-Availability** options for now; these are available in paid tiers only.)
+    {{< note >}}
+If you would rather customize your database, select **Create a custom database** to go to the **New database** page. From there, you can [Create a database]({{<relref "/rc/databases/create-database">}}).
+    {{< /note >}}
 
-    {{<image filename="images/rc/subscription-new-cloud-vendor-options.png" alt="Available cloud vendor options." >}}{{< /image >}}
+    The **Database list** appears with your new database in the list.
 
+    {{<image filename="images/rc/quickstart-database-list.png" width="75%" alt="The database list showing your new Database." >}}{{< /image >}}
 
-5.  In the **Fixed Size** panel, locate the **Dataset Size** list and then choose **30MB**.
+1.  Select the database name to view the **Configuration** tab for your new database.
 
-    Free plans are a tier of Fixed plans; this provides an easy upgrade path when you need it.
+    {{<image filename="images/rc/quickstart-database-overview.png" width="75%" alt="Configuration tab showing details of your new database." >}}{{< /image >}}
 
-    {{<image filename="images/rc/subscription-new-fixed-plan-options.png" alt="Create a free subscription. " >}}{{< /image >}}
+1.  In the upper corner, an icon shows the current status of the database.  If the icon shows an orange clock, this means your database is still being created and its status is _pending_.
 
-6.  Enter a descriptive **Subscription Name** and then select the **Create subscription**.
+       ![Pending status icon](/images/rc/icon-database-update-status-pending.png#no-click "Pending database status") &nbsp; ![Active status icon](/images/rc/icon-database-update-status-active.png#no-click "Active database status")
 
-    {{<image filename="images/rc/button-subscription-create.png" alt="The Create subscription button is located below the subscription options. " >}}{{< /image >}}
+       Once the database has been created, it becomes _active_ and the status indicator switches to a green circle containing a checkmark.  
 
+    Admin console operations are asynchronous; they operate [in the background]({{< relref "/rc/api/get-started/process-lifecycle.md" >}}).  You can continue to use the admin console for other tasks, but pending resources aren't available until they're active.
 
-## Create a database
-
-Now that you have a subscription, you need to create a database.
-
-1.  If you aren't already at the **Subscription details** screen, sign into the Redis Cloud admin console and select your subscription from the subscription list.
-
-2.  Select the **New Database** button.
-
-    {{<image filename="images/rc/button-database-new.png" alt="Use the New database to create a database." >}}{{< /image >}}
-
-2.  In the **General** section, enter a descriptive **Database Name**.  
-
-    - You have 40 characters  
-    - You can use letters, numbers, or a hyphen  
-    - The name must start with a letter and end with either a letter or a number
-    - Spaces are not allowed
-
-    {{<image filename="images/rc/database-new-free-name.png" width="75%" alt="Create new database. " >}}{{< /image >}}
-
-3.  For this exercise, leave the remaining options at their default values.  (To learn about them, see [Create a fixed subscription]({{< relref "/rc/subscriptions/create-fixed-subscription.md" >}}).)
-
-4.  Select the **Activate database** button near the upper, right corner of the page.
-
-5.  You're taken to the **Configuration tab** for your new database.
-
-    {{<image filename="images/rc/database-fixed-configuration-general.png" width="75%" alt="Configuration tab showing details of your new database." >}}{{< /image >}}
-
-    In the upper corner, an icon shows the current status of the database.  If the icon shows an orange clock, this means your database is still being created and its status is _pending_.
-
-    ![Pending status icon](/images/rc/icon-database-status-pending.png#no-click "Pending database status") &nbsp; ![Active status icon](/images/rc/icon-database-status-active.png#no-click "Active database status")
-
-    Once the database has been created, it becomes _active_ and the status indicator switches to a teal circle containing a checkmark.  
-
-Admin console operations are asynchronous; they operate [in the background]({{< relref "/rc/api/get-started/process-lifecycle.md" >}}).  You can continue to use the admin console for other tasks, but pending resources aren't available until they're active.
-
-When your new database becomes active, you're ready to connect to it.
+    When your new database becomes active, you're ready to connect to it.
 
 ## Connect to a database
 
-At this point, you're viewing the **Configuration** details for your new database.  
+At this point, you're viewing the **Configuration** details for your new database. Go to the **Security** section of the page.
 
-To connect to your database, you need the following info:
+To connect to your database, you need your username and password. Each database is protected by a **Default user** called `default` and a masked **Default user password**. Select the eye icon to show or hide the password.    
 
-- The public endpoint for your database
-- The port number
-- The database password
+{{<image filename="images/rc/database-fixed-configuration-security.png" width="75%" alt="The Security section of the Configuration tab of the database details page." >}}{{< /image >}}
 
-These are displayed in the **Configuration** tab.  
+Once you have the username and password, select **Connect** to open the connection wizard.
 
-- In the **General** section, the **Public endpoint** setting shows the URI for your database and the port number.  Use the **Copy** button to copy these values to the Clipboard.
+![Connect button](/images/rc/connection-wizard-button.png#no-click "Connect button.")
 
-- The **Security** section contains your **Default user password**.  By default, this is masked.  Select the eye icon to show or hide the password.    
+The connection wizard provides the following database connection methods:
 
-    {{<image filename="images/rc/database-fixed-configuration-security.png" width="75%" alt="The Security section of the Configuration tab of the database details page." >}}{{< /image >}}
+- [RedisInsight](https://redis.com/redis-enterprise/redis-insight/)
+
+- [`redis-cli`]({{<relref "/rs/references/cli-utilities/redis-cli/">}}) utility
+
+- [Redis client](https://redis.io/clients) for your preferred programming language
 
 
-Once you have the connection details, you can connect in a variety of ways, including:
+{{<image filename="images/rc/connection-wizard.png" alt="The connection wizard." >}}{{< /image >}}
 
-- Using the `redis-cli` utility 
+### RedisInsight{#using-redisinsight}
 
-- Using a [connection client](https://redis.io/clients) for your preferred programming language
+RedisInsight is a free Redis GUI that is available for MacOS, Windows, and Linux.
 
-Here's an example of each.
+1. In the connection wizard, under **RedisInsight**, select your operating system from the **Download RedisInsight** menu.
 
-### Use redis-cli (via Docker){#using-rediscli}
+1. Select **Download** to download RedisInsight.
 
-The `redis-cli` utility is installed when you install Redis.  It provides a command-line interface that lets you work with your database using core [Redis commands](https://redis.io/commands).
+1. [Install RedisInsight](https://redis.io/docs/connect/insight/).
 
-Docker provides a convenient way to run `redis-cli` without the full installation experience.
+1. Once installed, select **Open with RedisInsight**.
 
-When you run the `redis` Docker image, you can open a bash shell instance and run `redis-cli` from the container.
+1. A pop-up asks if you wish to open the link with RedisInsight. Select **Open RedisInsight** to connect to your database with RedisInsight.
 
-1.  To begin, pull the `redis` docker image and run it with default options:
 
-    ``` sh
-    $ docker pull redis
-    $ docker run -d --name redis1 redis
-    $ docker exec -it redis1 bash
-    ```
+See the [RedisInsight documentation](https://redis.io/docs/connect/insight/) for more information.
 
-2.  This gives you a bash prompt running within your Docker image.  From here, you can connect to your database:
+### Redis client{#using-redis-client}
 
-    ``` sh
-    # redis-cli -h <endpoint> -p <port> -a <password>
-    xxx:yyy> 
-    ```
+A Redis client is a software library or tool that enables applications to interact with a Redis server. Each client has its own syntax and installation process. For help with a specific client, see the client's documentation.
 
-    Replace `<endpoint>`, `<port>`, and `<password>` with the details copied earlier from the **View Database** screen.
+The connection wizard provides code snippets to connect to your database with the following programming languages:
 
-3.  You should now be connected to your database and can perform basic Redis commands:
+- node.js using [node-redis](https://github.com/redis/node-redis/blob/master/README.md)
+- .NET using [StackExchange.Redis](https://stackexchange.github.io/StackExchange.Redis/)
+- Python using [redis-py](https://github.com/redis/redis-py#redis-py)
+- Java using [Jedis](https://github.com/redis/jedis#jedis)
 
-    ``` sh
-    xxx:yyy> ping
-    PONG
-    xxx:yyy> set hello world
-    OK
-    xxx:yyy> get hello
-    "world"
-    ```
+{{<image filename="images/rc/connection-wizard-clients.png" alt="The connection wizard clients." >}}{{< /image >}}
 
-### Use code (Python)
+See [Clients](https://redis.io/docs/connect/clients/) to learn how to connect with the official Redis clients, or see the [Client list](https://redis.io/resources/clients/) to view all community-run clients by language.
 
-Different programming languages use different clients to interact with Redis databases.
+### redis-cli {#using-rediscli}
 
-Here's how to connect to your database using the `redis-py` library for Python.
+The [`redis-cli`]({{<relref "/rs/references/cli-utilities/redis-cli/">}}) utility is installed when you install Redis.  It provides a command-line interface that lets you work with your database using core [Redis commands](https://redis.io/commands/).
 
-1.  If you don't already have the client installed:
+To run `redis-cli`, [install Redis Stack](https://redis.io/docs/install/install-stack/) on your machine.
 
-    ```sh
-    sudo pip install redis
-    ```
-
-2.  The specific syntax varies according to the client:
-
-    ```python
-    import redis
-    r = redis.Redis(host='<endpoint>', port='<port>', 
-                    password='<password>')
-    r.set('hello', 'world')
-    print(r.get('hello'))
-    ```
-    
-3.  Now, run the code:
-
-    ```sh
-    $ python example_redis.py
-    world
-    ```
+See [Redis CLI](https://redis.io/docs/connect/cli/) to learn how to use `redis-cli`.
 
 ## More info
 
-- [Manage databases]({{< relref "/rc/databases/_index.md" >}})
+- [Connect your application](https://redis.io/docs/connect/clients/)
+- [Import data]({{< relref "/rc/databases/import-data.md" >}})
+- [Manage databases]({{< relref "/rc/databases" >}})
 - [Data persistence]({{< relref "/rc/databases/configuration/data-persistence.md" >}})
-- [Secure your Redis Enterprise Cloud database]({{< relref "/rc/administration/security/_index.md" >}})
-- [Back-up Flexible databases]({{< relref "/rc/databases/back-up-data.md" >}})
-- [Monitor Redis Enterprise Cloud performance]({{< relref "/rc/databases/monitor-performance.md" >}}).
+- [Secure your Redis Cloud database]({{< relref "/rc/security/" >}})
+- [Back-up databases]({{< relref "/rc/databases/back-up-data.md" >}})
+- [Monitor Redis Cloud performance]({{< relref "/rc/databases/monitor-performance.md" >}}).
